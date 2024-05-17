@@ -96,7 +96,6 @@ abstract class SlideOverComponent extends Component implements PanelContract
         }
 
         if (static::panelPosition() === Position::Bottom) {
-            dump('Hi');
             return static::$maxWidths['7xl'];
         }
 
