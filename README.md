@@ -23,14 +23,14 @@ If you've already used it, then the behavior is the same, except that instead of
 
 To get started, require the package via Composer
 
-```bash
+```shell
 composer require laravelcm/livewire-slide-overs
 ```
 
 ### Usage
 Add the Livewire directive @livewire('slide-over-panel') directive to your master layout.
 
-```bladehtml
+```blade
 <html>
 <body>
     <!-- content -->
@@ -40,11 +40,46 @@ Add the Livewire directive @livewire('slide-over-panel') directive to your maste
 </html>
 ```
 
-### Test
+## Creating a Slide Over
+You can run `php artisan make:livewire ShoppingCart` to make the initial Livewire component. Open your component class and make sure it extends the `SlideOverComponent` class:
 
+```php
+<?php
+
+namespace App\Livewire;
+
+use Laravelcm\LivewireSlideOvers\SlideOverComponent;
+
+class ShoppingCart extends SlideOverComponent
+{
+    public function render()
+    {
+        return view('livewire.shopping-cart');
+    }
+}
+```
+
+## Opening a Slide over
+To open a slide over you will need to dispatch an event. To open the `ShoppingCart` slide over for example:
+
+```html
+<!-- Outside of any Livewire component -->
+<button onclick="Livewire.dispatch('openPanel', { component: 'shopper-cart' })">View cart</button>
+
+<!-- Inside existing Livewire component -->
+<button wire:click="$dispatch('openPanel', { component: 'shopping-cart' })">View cart</button>
+
+<!-- Taking namespace into account for component Shop/Actions/ShoppingCart -->
+<button wire:click="$dispatch('openPanel', { component: 'shop.actions.shopping-cart' })">View cart</button>
+```
+
+### Configuration
+wip...
+
+### Test
 wip..
 
-```bash
+```shell
 composer test
 ```
 
