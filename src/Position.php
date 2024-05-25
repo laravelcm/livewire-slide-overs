@@ -9,6 +9,4 @@ enum Position: string
     case Left = 'left';
 
     case Right = 'right';
-
-    case Bottom = 'bottom';
 }
