@@ -47,7 +47,7 @@
                         x-transition:leave-start="translate-x-0"
                         x-transition:leave-end="translate-x-full"
                         class="pointer-events-auto w-screen"
-                        x-bind:class="{ panelWidth, panelPosition }"
+                        x-bind:class="panelWidth"
                         x-trap.noscroll.inert="open && showActiveComponent"
                         @click.away="closePanelOnClickAway()"
                         aria-modal="true"
