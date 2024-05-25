@@ -1,9 +1,14 @@
 <div>
     @isset($jsPath)
-        <script>{!! file_get_contents($jsPath) !!}</script>
+        <script>
+            {!! file_get_contents($jsPath) !!}
+        </script>
     @endisset
+
     @isset($cssPath)
-        <style>{!! file_get_contents($cssPath) !!}</style>
+        <style>
+            {!! file_get_contents($cssPath) !!}
+        </style>
     @endisset
 
     <section
@@ -26,7 +31,7 @@
             x-transition:leave="duration-500 ease-in-out"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-gray-700 bg-opacity-75 backdrop-blur-sm transition-opacity"
+            class="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm transition-opacity"
         ></div>
 
         <div class="fixed inset-0 overflow-hidden">
@@ -42,7 +47,7 @@
                         x-transition:leave-start="translate-x-0"
                         x-transition:leave-end="translate-x-full"
                         class="pointer-events-auto w-screen"
-                        x-bind:class="panelWidth"
+                        x-bind:class="{ panelWidth, panelPosition }"
                         x-trap.noscroll.inert="open && showActiveComponent"
                         @click.away="closePanelOnClickAway()"
                         aria-modal="true"
@@ -58,6 +63,7 @@
                                     @livewire($component['name'], $component['arguments'], key($id))
                                 </div>
                             @empty
+
                             @endforelse
                         </div>
                     </div>

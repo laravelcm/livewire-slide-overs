@@ -76,10 +76,6 @@ abstract class SlideOverComponent extends Component implements PanelContract
 
     public static function panelMaxWidth(): string
     {
-        if (static::panelPosition() === Position::Bottom) {
-            return '7xl';
-        }
-
         return config('livewire-slide-over.slide_over_max_width', 'xl');
     }
 
@@ -93,10 +89,6 @@ abstract class SlideOverComponent extends Component implements PanelContract
                     implode(', ', array_keys(static::$maxWidths))
                 ),
             );
-        }
-
-        if (static::panelPosition() === Position::Bottom) {
-            return static::$maxWidths['7xl'];
         }
 
         return static::$maxWidths[SlideOverComponent::panelMaxWidth()];
