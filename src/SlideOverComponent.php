@@ -76,7 +76,7 @@ abstract class SlideOverComponent extends Component implements PanelContract
 
     public static function panelMaxWidth(): string
     {
-        return config('livewire-slide-over.slide_over_max_width', 'xl');
+        return config('livewire-slide-over.component_defaults.slide_over_max_width', 'xl');
     }
 
     public static function panelMaxWidthClass(): string
