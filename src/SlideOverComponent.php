@@ -101,27 +101,27 @@ abstract class SlideOverComponent extends Component implements PanelContract
 
     public static function closePanelOnClickAway(): bool
     {
-        return config('livewire-slide-over.close_slide_over_on_click_away', true);
+        return config('livewire-slide-over.component_defaults.close_slide_over_on_click_away', true);
     }
 
     public static function closePanelOnEscape(): bool
     {
-        return config('livewire-slide-over.close_slide_over_on_escape', true);
+        return config('livewire-slide-over.component_defaults.close_slide_over_on_escape', true);
     }
 
     public static function closePanelOnEscapeIsForceful(): bool
     {
-        return config('livewire-slide-over.close_slide_over_on_escape_is_forceful', true);
+        return config('livewire-slide-over.component_defaults.close_slide_over_on_escape_is_forceful', true);
     }
 
     public static function dispatchCloseEvent(): bool
     {
-        return config('livewire-slide-over.dispatch_close_event', false);
+        return config('livewire-slide-over.component_defaults.dispatch_close_event', false);
     }
 
     public static function destroyOnClose(): bool
     {
-        return config('livewire-slide-over.destroy_on_close', false);
+        return config('livewire-slide-over.component_defaults.destroy_on_close', false);
     }
 
     private function emitPanelEvents(array $events): void
