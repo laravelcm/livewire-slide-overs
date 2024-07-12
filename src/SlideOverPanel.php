@@ -121,11 +121,11 @@ class SlideOverPanel extends Component
 
     public function render(): View
     {
-        if (config('livewire-slide-overs.include_js', true)) {
+        if (config('livewire-slide-over.include_js', true)) {
             $jsPath = __DIR__ . '/../public/slide-over.js';
         }
 
-        if (config('livewire-slide-overs.include_css', true)) {
+        if (config('livewire-slide-over.include_css', true)) {
             $cssPath = __DIR__ . '/../public/slide-over.css';
         }
 
