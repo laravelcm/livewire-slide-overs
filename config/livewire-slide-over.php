@@ -9,7 +9,7 @@ return [
     | Include CSS
     |--------------------------------------------------------------------------
     |
-    | The modal uses TailwindCSS, if you don't use TailwindCSS you will need
+    | The SLide over uses TailwindCSS, if you don't use TailwindCSS you will need
     | to set this parameter to true. This includes the modern-normalize css.
     |
     */
@@ -22,7 +22,7 @@ return [
     |
     | Livewire Slide Overs will inject the required Javascript in your blade template.
     | If you want to bundle the required Javascript you can set this to false
-    | and add `require('vendor/laravelcm/livewire-slide-overs/resources/js/modal');`
+    | and add `require('vendor/laravelcm/livewire-slide-overs/resources/js/slide-over');`
     | to your script bundler like webpack.
     |
     */
