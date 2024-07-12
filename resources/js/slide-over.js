@@ -144,7 +144,6 @@ window.SlideOver = () => {
     init() {
       this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
       this.panelPosition = this.getActiveComponentPanelAttribute('position')
-      console.log(this.getActiveComponentPanelAttribute('maxWidthClass'))
 
       this.listeners.push(
         Livewire.on('closePanel', (data) => {
