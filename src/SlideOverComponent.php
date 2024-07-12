@@ -81,17 +81,17 @@ abstract class SlideOverComponent extends Component implements PanelContract
 
     public static function panelMaxWidthClass(): string
     {
-        if (! array_key_exists(SlideOverComponent::panelMaxWidth(), static::$maxWidths)) {
+        if (! array_key_exists(static::panelMaxWidth(), static::$maxWidths)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Panel max width [%s] is invalid. The width must be one of the following [%s].',
-                    SlideOverComponent::panelMaxWidth(),
+                    static::panelMaxWidth(),
                     implode(', ', array_keys(static::$maxWidths))
                 ),
             );
         }
 
-        return static::$maxWidths[SlideOverComponent::panelMaxWidth()];
+        return static::$maxWidths[static::panelMaxWidth()];
     }
 
     public static function panelPosition(): Position
