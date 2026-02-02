@@ -1,3 +1,10 @@
+@php
+    use Laravelcm\LivewireSlideOvers\Position;
+
+    $position = config('livewire-slide-over.position', Position::Right);
+    $isLeft = $position === Position::Left;
+@endphp
+
 <div>
     @isset($jsPath)
         <script>
@@ -31,41 +38,47 @@
             x-transition:leave="duration-500 ease-in-out"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm transition-opacity"
+            class="fixed inset-0 bg-zinc-950/50 dark:bg-zinc-950/75"
         ></div>
 
-        <div class="fixed inset-0 overflow-hidden">
-            <div class="absolute inset-0 overflow-hidden">
-                <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div class="fixed inset-0">
+            <div
+                @class([
+                    'pointer-events-none fixed inset-y-0 flex max-w-full py-2',
+                    'left-0 pl-2 pr-10' => $isLeft,
+                    'right-0 pr-2 pl-10' => ! $isLeft,
+                ])
+            >
+                <div
+                    x-cloak
+                    x-show="open && showActiveComponent"
+                    x-transition:enter="transform transition duration-500 ease-in-out"
+                    x-transition:enter-start="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition duration-500 ease-in-out"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                    class="pointer-events-auto w-screen"
+                    x-bind:class="panelWidth"
+                    x-trap.noscroll.inert="open && showActiveComponent"
+                    @click.away="closePanelOnClickAway()"
+                    aria-modal="true"
+                >
                     <div
-                        x-cloak
-                        x-show="open && showActiveComponent"
-                        x-transition:enter="transform transition duration-500 ease-in-out"
-                        x-transition:enter-start="translate-x-full"
-                        x-transition:enter-end="translate-x-0"
-                        x-transition:leave="transform transition duration-500 ease-in-out"
-                        x-transition:leave-start="translate-x-0"
-                        x-transition:leave-end="translate-x-full"
-                        class="pointer-events-auto w-screen"
-                        x-bind:class="panelWidth"
-                        x-trap.noscroll.inert="open && showActiveComponent"
-                        @click.away="closePanelOnClickAway()"
-                        aria-modal="true"
+                        class="h-full overflow-hidden rounded-xl bg-zinc-50 shadow-lg ring-1 ring-zinc-950/20 p-1.5 dark:bg-zinc-950 dark:ring-white/10"
                     >
-                        <div class="h-full bg-white shadow-xl dark:bg-gray-900">
-                            @forelse ($components as $id => $component)
-                                <div
-                                    class="h-full"
-                                    x-show.immediate="activeComponent == '{{ $id }}'"
-                                    x-ref="{{ $id }}"
-                                    wire:key="{{ $id }}"
-                                >
-                                    @livewire($component['name'], $component['arguments'], key($id))
-                                </div>
-                            @empty
+                        @forelse ($components as $id => $component)
+                            <div
+                                class="size-full min-w-0 rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
+                                x-show.immediate="activeComponent == '{{ $id }}'"
+                                x-ref="{{ $id }}"
+                                wire:key="{{ $id }}"
+                            >
+                                @livewire($component['name'], $component['arguments'], key($id))
+                            </div>
+                        @empty
 
-                            @endforelse
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

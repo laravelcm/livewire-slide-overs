@@ -14,15 +14,16 @@
     }
   ],
   "require": {
-    "php": "^8.2",
-    "livewire/livewire": "^3.4",
-    "spatie/laravel-package-tools": "^1.15"
+    "php": "^8.3",
+    "livewire/livewire": "^3.4|^4.0",
+    "spatie/laravel-package-tools": "^1.19"
   },
   "require-dev": {
-    "orchestra/testbench": "^8.5",
+    "orchestra/testbench": "^9.0|^10.0",
     "laravel/pint": "^1.1",
-    "pestphp/pest": "^2.34",
-    "pestphp/pest-plugin-livewire": "^2.1"
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-livewire": "^4.0",
+    "phpstan/phpstan": "^2.1.27"
   },
   "autoload": {
     "psr-4": {
@@ -34,16 +35,18 @@
       "Laravelcm\\LivewireSlideOvers\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "lint": "pint",
+    "test:lint": "pint --test",
+    "test:types": "phpstan analyse --ansi",
+    "test": "pest"
+  },
   "extra": {
     "laravel": {
       "providers": [
         "Laravelcm\\LivewireSlideOvers\\LivewireSlideOverServiceProvider"
       ]
     }
-  },
-  "scripts": {
-    "test": "vendor/bin/pest",
-    "pint": "vendor/bin/pint"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

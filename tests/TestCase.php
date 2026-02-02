@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laravelcm\LivewireSlideOvers\Tests;
 
+use Laravelcm\LivewireSlideOvers\LivewireSlideOverServiceProvider;
 use Livewire\LivewireServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
@@ -12,6 +13,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             LivewireServiceProvider::class,
+            LivewireSlideOverServiceProvider::class,
         ];
     }
 
