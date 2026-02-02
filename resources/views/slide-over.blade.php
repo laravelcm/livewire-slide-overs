@@ -69,7 +69,7 @@
                     >
                         @forelse ($components as $id => $component)
                             <div
-                                class="size-full min-w-0 rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
+                                class="size-full min-w-0 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
                                 x-show.immediate="activeComponent == '{{ $id }}'"
                                 x-ref="{{ $id }}"
                                 wire:key="{{ $id }}"
