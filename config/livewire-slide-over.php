@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Laravelcm\LivewireSlideOvers\Position;
+
 return [
 
     /*
@@ -9,7 +11,7 @@ return [
     | Include CSS
     |--------------------------------------------------------------------------
     |
-    | The SLide over uses TailwindCSS, if you don't use TailwindCSS you will need
+    | The Slide over uses TailwindCSS, if you don't use TailwindCSS you will need
     | to set this parameter to true. This includes the modern-normalize css.
     |
     */
@@ -30,16 +32,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Slide Over Position
+    | Slide Over Position
     |--------------------------------------------------------------------------
-    | Configure which way the slide-over will open
     |
-    | Available slide overs position
-    | Position::Right, Position::Left, Position::Bottom
+    | Configure which side the slide-over will open from.
+    |
+    | Supported: Position::Right, Position::Left
     |
     */
-
-    'default_position' => \Laravelcm\LivewireSlideOvers\Position::Right,
+    'position' => Position::Right,
 
     /*
     |--------------------------------------------------------------------------
@@ -50,8 +51,8 @@ return [
     |
     | Supported slide_over_max_width
     | 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'
+    |
     */
-
     'component_defaults' => [
         'slide_over_max_width' => 'xl',
         'close_slide_over_on_click_away' => true,
