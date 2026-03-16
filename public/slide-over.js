@@ -55,6 +55,12 @@ window.SlideOver = () => {
       }
 
       let force = this.getActiveComponentPanelAttribute('closeOnEscapeIsForceful') === true
+
+      if (this.stacked && this.componentHistory.length > 0) {
+        this.closePanel(false)
+        return
+      }
+
       this.closePanel(force)
     },
     closePanelOnClickAway(trigger) {
