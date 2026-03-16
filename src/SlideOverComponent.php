@@ -172,7 +172,7 @@ abstract class SlideOverComponent extends Component implements PanelContract
                 $this->dispatch($eventName, ...$params);
             } else {
                 $dispatcher = $this->dispatch($eventName, ...$params);
-                $dispatcher->to((string) $component);
+                $dispatcher->to((string) $component); // @phpstan-ignore-line
             }
         }
     }
