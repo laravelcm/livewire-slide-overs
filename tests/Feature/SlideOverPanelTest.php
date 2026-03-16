@@ -23,9 +23,10 @@ it('opens a panel via openPanel event', function (): void {
         'closeOnEscapeIsForceful' => true,
         'dispatchCloseEvent' => false,
         'destroyOnClose' => false,
+        'position' => 'right',
     ];
 
-    $id = md5($component.serialize($arguments));
+    $id = md5($component.json_encode($arguments));
 
     Livewire::test(SlideOverPanel::class)
         ->dispatch('openPanel', component: $component, arguments: $arguments, panelAttributes: $panelAttributes)
@@ -52,9 +53,10 @@ it('destroys a component via destroyComponent event', function (): void {
         'closeOnEscapeIsForceful' => true,
         'dispatchCloseEvent' => false,
         'destroyOnClose' => false,
+        'position' => 'right',
     ];
 
-    $id = md5($component.serialize($arguments));
+    $id = md5($component.json_encode($arguments));
 
     Livewire::test(SlideOverPanel::class)
         ->dispatch('openPanel', component: $component, arguments: $arguments, panelAttributes: $panelAttributes)
@@ -87,4 +89,30 @@ it('throws exception when component does not implement PanelContract', function 
 
     Livewire::test(SlideOverPanel::class)
         ->dispatch('openPanel', component: 'invalid-slide-over');
+});
+
+it('opens panel with default attributes when no panelAttributes provided', function (): void {
+    $component = 'demo-slide-over';
+    $arguments = ['message' => 'Default'];
+
+    $id = md5($component.json_encode($arguments));
+
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: $component, arguments: $arguments)
+        ->assertSet('activeComponent', $id)
+        ->assertDispatched('activePanelComponentChanged', id: $id);
+});
+
+it('includes position in panel attributes', function (): void {
+    $component = 'demo-slide-over';
+    $arguments = ['message' => 'Position test'];
+
+    $id = md5($component.json_encode($arguments));
+
+    $testable = Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: $component, arguments: $arguments);
+
+    $components = $testable->get('components');
+
+    expect($components[$id]['panelAttributes'])->toHaveKey('position', 'right');
 });

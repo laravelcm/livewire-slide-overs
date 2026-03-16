@@ -1,14 +1,11 @@
-@php
-    $closeOnEscape = config('livewire-slide-over.component_defaults.close_slide_over_on_escape', true);
-@endphp
-
 <div class="flex items-center gap-2 h-7">
-    @if ($closeOnEscape)
+    <template x-if="closeOnEscape">
         <span
-            class="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500">
+            class="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500"
+        >
             esc
         </span>
-    @endif
+    </template>
 
     <button
         type="button"
