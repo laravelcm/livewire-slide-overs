@@ -44,6 +44,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Stacked Panels
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, opening a new panel while one is already open will visually
+    | stack them: previous panels remain visible but scale down and shift aside,
+    | creating a depth effect. When disabled (default), only the active panel
+    | is visible and previous panels are hidden.
+    |
+    */
+    'stack' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Slide Over Component Defaults
     |--------------------------------------------------------------------------
     |
