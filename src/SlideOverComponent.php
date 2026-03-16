@@ -171,7 +171,6 @@ abstract class SlideOverComponent extends Component implements PanelContract
             if (is_numeric($component)) {
                 $this->dispatch($eventName, ...$params);
             } else {
-                /** @var \Livewire\Features\SupportEvents\Event $dispatcher */
                 $dispatcher = $this->dispatch($eventName, ...$params);
                 $dispatcher->to((string) $component);
             }
