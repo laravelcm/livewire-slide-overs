@@ -3,8 +3,10 @@ window.SlideOver = () => {
     open: false,
     showActiveComponent: true,
     activeComponent: false,
+    closeOnEscape: true,
     componentHistory: [],
     panelWidth: null,
+    panelPosition: 'right',
     listeners: [],
     getActiveComponentPanelAttribute(key) {
       if (this.$wire.get('components')[this.activeComponent] !== undefined) {
@@ -27,7 +29,7 @@ window.SlideOver = () => {
       this.closePanel(true)
     },
     closePanel(force = false, skipPreviousPanels = 0, destroySkipped = false) {
-      if (this.show === false) {
+      if (this.open === false) {
         return
       }
 
@@ -79,6 +81,8 @@ window.SlideOver = () => {
         this.activeComponent = id
         this.showActiveComponent = true
         this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
+        this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
+        this.closeOnEscape = this.getActiveComponentPanelAttribute('closeOnEscape') ?? true
       } else {
         this.showActiveComponent = false
 
@@ -88,6 +92,8 @@ window.SlideOver = () => {
           this.activeComponent = id
           this.showActiveComponent = true
           this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
+          this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
+          this.closeOnEscape = this.getActiveComponentPanelAttribute('closeOnEscape') ?? true
         }, 300)
       }
 
@@ -140,6 +146,7 @@ window.SlideOver = () => {
     },
     init() {
       this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
+      this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
 
       this.listeners.push(
         Livewire.on('closePanel', (data) => {

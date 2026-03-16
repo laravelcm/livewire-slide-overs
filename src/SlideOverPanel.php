@@ -12,13 +12,14 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Reflector;
 use Laravelcm\LivewireSlideOvers\Contracts\PanelContract;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\Finder\Finder;
+use Livewire\Factory\Factory;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionNamedType;
 use ReflectionProperty;
 
 class SlideOverPanel extends Component
@@ -78,18 +79,11 @@ class SlideOverPanel extends Component
      */
     protected function resolveComponentClass(string $component): string
     {
-        if (class_exists(\Livewire\Mechanisms\ComponentRegistry::class)) {
-            /** @var class-string $class */
-            $class = app(\Livewire\Mechanisms\ComponentRegistry::class)->getClass($component);
-
-            return $class;
-        }
-
-        /** @var Finder $finder */
-        $finder = app('livewire.finder');
+        /** @var Factory $factory */
+        $factory = app('livewire.factory');
 
         /** @var class-string $class */
-        $class = $finder->resolveClassComponentClassName($component);
+        $class = $factory->resolveComponentClass($component);
 
         return $class;
     }
@@ -106,6 +100,7 @@ class SlideOverPanel extends Component
      *
      * @throws ReflectionException
      */
+    #[On('openPanel')]
     public function openPanel(string $component, array $arguments = [], array $panelAttributes = []): void
     {
         $requiredInterface = PanelContract::class;
@@ -117,7 +112,7 @@ class SlideOverPanel extends Component
             throw new Exception("[{$componentClass}] does not implement [{$requiredInterface}] interface.");
         }
 
-        $id = md5($component.serialize($arguments));
+        $id = md5($component.json_encode($arguments));
 
         $arguments = collect($arguments)
             ->merge($this->resolveComponentProps($arguments, new $componentClass))
@@ -134,6 +129,7 @@ class SlideOverPanel extends Component
                 'destroyOnClose' => $componentClass::destroyOnClose(),
                 'maxWidth' => $componentClass::panelMaxWidth(),
                 'maxWidthClass' => $componentClass::panelMaxWidthClass(),
+                'position' => $componentClass::panelPosition()->value,
             ], $panelAttributes),
         ];
 
@@ -166,35 +162,16 @@ class SlideOverPanel extends Component
 
         /** @var Collection<string, class-string> $result */
         $result = collect($properties)
-            ->map(function (mixed $value, string $name) use ($component): ?string {
-                $property = new ReflectionProperty($component, $name);
-                $type = $property->getType();
-
-                if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-                    return $type->getName();
-                }
-
-                return null;
-            })
+            ->map(fn (mixed $value, string $name): ?string => Reflector::getParameterClassName(new ReflectionProperty($component, $name))) // @phpstan-ignore-line
             ->filter();
 
         return $result;
     }
 
+    #[On('destroyComponent')]
     public function destroyComponent(string $id): void
     {
         unset($this->components[$id]);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getListeners(): array
-    {
-        return [
-            'openPanel',
-            'destroyComponent',
-        ];
     }
 
     public function render(): View

@@ -1,31 +1,37 @@
 name: Build Assets
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
+    paths:
+      - 'resources/**'
 
 jobs:
-  npm-build:
+  build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           ref: main
+
       - name: Set up Node
         uses: actions/setup-node@v6
+
       - name: Install dependencies
         run: npm ci
-      - name: Build assets
+
+      - name: Build CSS
         run: npm run build
-      - name: Pull changes
-        run: git pull
+
+      - name: Copy JS to public
+        run: cp resources/js/slide-over.js public/slide-over.js
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
           commit_message: "chore: build assets"
+          file_pattern: "public/*"
