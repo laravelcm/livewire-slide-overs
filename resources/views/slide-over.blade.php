@@ -3,6 +3,7 @@
 
     $position = config('livewire-slide-over.position', Position::Right);
     $isLeft = $position === Position::Left;
+    $isStacked = config('livewire-slide-over.stack', false);
 @endphp
 
 <div>
@@ -20,6 +21,7 @@
 
     <section
         x-data="SlideOver()"
+        data-stacked="{{ $isStacked ? 'true' : 'false' }}"
         x-on:close.stop="setShowPropertyTo(false)"
         x-on:keydown.escape.window="closePanelOnEscape()"
         x-show="open"
@@ -42,46 +44,85 @@
         ></div>
 
         <div class="fixed inset-0">
-            <div
-                @class([
-                    'pointer-events-none fixed inset-y-0 flex max-w-full py-2',
-                    'left-0 pl-2 pr-10' => $isLeft,
-                    'right-0 pr-2 pl-10' => ! $isLeft,
-                ])
-            >
+            @if ($isStacked)
                 <div
-                    x-cloak
-                    x-show="open && showActiveComponent"
-                    x-transition:enter="transform transition duration-500 ease-in-out"
-                    x-transition:enter-start="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
-                    x-transition:enter-end="translate-x-0"
-                    x-transition:leave="transform transition duration-500 ease-in-out"
-                    x-transition:leave-start="translate-x-0"
-                    x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
-                    class="pointer-events-auto w-screen"
-                    x-bind:class="panelWidth"
-                    x-trap.noscroll.inert="open && showActiveComponent"
-                    @click.away="closePanelOnClickAway()"
-                    aria-modal="true"
+                    @class([
+                        'pointer-events-none fixed inset-y-0 grid max-w-full py-2',
+                        'left-0 pl-2 pr-10' => $isLeft,
+                        'right-0 pr-2 pl-10' => ! $isLeft,
+                    ])
+                    style="grid-template-areas: 'stack'"
                 >
-                    <div
-                        class="h-full overflow-hidden rounded-xl bg-zinc-50 shadow-lg ring-1 ring-zinc-950/20 p-1.5 dark:bg-zinc-950 dark:ring-white/10"
-                    >
-                        @forelse ($components as $id => $component)
+                    @forelse ($components as $id => $component)
+                        <div
+                            x-show="open && isComponentVisible('{{ $id }}')"
+                            x-transition:enter="transform transition duration-500 ease-in-out"
+                            x-transition:enter-start="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                            x-transition:enter-end="translate-x-0"
+                            x-transition:leave="transform transition duration-500 ease-in-out"
+                            x-transition:leave-start="translate-x-0"
+                            x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                            class="pointer-events-auto w-screen"
+                            x-bind:class="getComponentPanelAttribute('{{ $id }}', 'maxWidthClass') ?? panelWidth"
+                            style="grid-area: stack"
+                            wire:key="{{ $id }}"
+                        >
                             <div
-                                class="size-full min-w-0 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
-                                x-show.immediate="activeComponent == '{{ $id }}'"
+                                class="h-full transition-[transform,opacity] duration-300 ease-in-out"
+                                x-bind:style="getStackStyle('{{ $id }}')"
+                                x-bind:inert="activeComponent !== '{{ $id }}'"
+                                x-trap="activeComponent === '{{ $id }}'"
                                 x-ref="{{ $id }}"
-                                wire:key="{{ $id }}"
                             >
                                 @livewire($component['name'], $component['arguments'], key($id))
                             </div>
-                        @empty
+                        </div>
+                    @empty
 
-                        @endforelse
+                    @endforelse
+                </div>
+            @else
+                <div
+                    @class([
+                        'pointer-events-none fixed inset-y-0 flex max-w-full py-2',
+                        'left-0 pl-2 pr-10' => $isLeft,
+                        'right-0 pr-2 pl-10' => ! $isLeft,
+                    ])
+                >
+                    <div
+                        x-cloak
+                        x-show="open && showActiveComponent"
+                        x-transition:enter="transform transition duration-500 ease-in-out"
+                        x-transition:enter-start="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                        x-transition:enter-end="translate-x-0"
+                        x-transition:leave="transform transition duration-500 ease-in-out"
+                        x-transition:leave-start="translate-x-0"
+                        x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
+                        class="pointer-events-auto w-screen"
+                        x-bind:class="panelWidth"
+                        x-trap.noscroll.inert="open && showActiveComponent"
+                        @click.away="closePanelOnClickAway()"
+                        aria-modal="true"
+                    >
+                        <div
+                            class="h-full overflow-hidden rounded-xl bg-zinc-50 shadow-lg ring-1 ring-zinc-950/20 p-1.5 dark:bg-zinc-950 dark:ring-white/10"
+                        >
+                            @forelse ($components as $id => $component)
+                                <div
+                                    class="size-full min-w-0 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
+                                    x-show.immediate="activeComponent == '{{ $id }}'"
+                                    x-ref="{{ $id }}"
+                                    wire:key="{{ $id }}"
+                                >
+                                    @livewire($component['name'], $component['arguments'], key($id))
+                                </div>
+                            @empty
+
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </section>
 </div>

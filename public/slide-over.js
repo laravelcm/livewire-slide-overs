@@ -7,10 +7,46 @@ window.SlideOver = () => {
     componentHistory: [],
     panelWidth: null,
     panelPosition: 'right',
+    stacked: false,
     listeners: [],
     getActiveComponentPanelAttribute(key) {
       if (this.$wire.get('components')[this.activeComponent] !== undefined) {
         return this.$wire.get('components')[this.activeComponent]['panelAttributes'][key]
+      }
+    },
+    getComponentPanelAttribute(id, key) {
+      const components = this.$wire.get('components')
+      if (components[id] !== undefined) {
+        return components[id]['panelAttributes'][key]
+      }
+    },
+    isComponentVisible(id) {
+      return id === this.activeComponent || this.componentHistory.includes(id)
+    },
+    getStackIndex(id) {
+      if (id === this.activeComponent) {
+        return 0
+      }
+
+      const historyIndex = this.componentHistory.indexOf(id)
+      if (historyIndex === -1) {
+        return -1
+      }
+
+      return this.componentHistory.length - historyIndex
+    },
+    getStackStyle(id) {
+      const index = this.getStackIndex(id)
+      if (index <= 0) {
+        return {}
+      }
+
+      const position = this.getComponentPanelAttribute(id, 'position') ?? 'right'
+      const dx = position === 'left' ? 1 : -1
+
+      return {
+        transform: 'scale(' + (1 - 0.05 * index) + ') translateX(' + (2 * dx * index) + 'rem)',
+        opacity: index <= 2 ? 1 : 0,
       }
     },
     closePanelOnEscape(trigger) {
@@ -19,6 +55,12 @@ window.SlideOver = () => {
       }
 
       let force = this.getActiveComponentPanelAttribute('closeOnEscapeIsForceful') === true
+
+      if (this.stacked && this.componentHistory.length > 0) {
+        this.closePanel(false)
+        return
+      }
+
       this.closePanel(force)
     },
     closePanelOnClickAway(trigger) {
@@ -84,7 +126,9 @@ window.SlideOver = () => {
         this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
         this.closeOnEscape = this.getActiveComponentPanelAttribute('closeOnEscape') ?? true
       } else {
-        this.showActiveComponent = false
+        if (!this.stacked) {
+          this.showActiveComponent = false
+        }
 
         focusableTimeout = 400
 
@@ -94,7 +138,7 @@ window.SlideOver = () => {
           this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
           this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
           this.closeOnEscape = this.getActiveComponentPanelAttribute('closeOnEscape') ?? true
-        }, 300)
+        }, this.stacked ? 0 : 300)
       }
 
       this.$nextTick(() => {
@@ -140,6 +184,7 @@ window.SlideOver = () => {
 
         setTimeout(() => {
           this.activeComponent = false
+          this.componentHistory = []
           this.$wire.resetState()
         }, 300)
       }
@@ -147,6 +192,7 @@ window.SlideOver = () => {
     init() {
       this.panelWidth = this.getActiveComponentPanelAttribute('maxWidthClass')
       this.panelPosition = this.getActiveComponentPanelAttribute('position') ?? 'right'
+      this.stacked = this.$el.dataset.stacked === 'true'
 
       this.listeners.push(
         Livewire.on('closePanel', (data) => {
