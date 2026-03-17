@@ -17,7 +17,6 @@ use Laravelcm\LivewireSlideOvers\Contracts\PanelContract;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\Factory\Factory;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
@@ -79,11 +78,16 @@ class SlideOverPanel extends Component
      */
     protected function resolveComponentClass(string $component): string
     {
-        /** @var Factory $factory */
-        $factory = app('livewire.factory');
+        // Livewire 4.x uses livewire.factory, Livewire 3.x uses ComponentRegistry
+        if (app()->bound('livewire.factory')) {
+            /** @var class-string $class */
+            $class = app('livewire.factory')->resolveComponentClass($component); // @phpstan-ignore-line
+
+            return $class;
+        }
 
         /** @var class-string $class */
-        $class = $factory->resolveComponentClass($component);
+        $class = app('Livewire\Mechanisms\ComponentRegistry')->getClass($component); // @phpstan-ignore-line
 
         return $class;
     }
