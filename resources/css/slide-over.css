@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @source "../views";
+@source inline("max-w-{sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl}");
 
 @custom-variant dark (&:where(.dark, .dark *));
 
