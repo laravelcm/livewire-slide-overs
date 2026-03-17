@@ -62,7 +62,7 @@
                             x-transition:leave="transform transition duration-500 ease-in-out"
                             x-transition:leave-start="translate-x-0"
                             x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
-                            class="pointer-events-auto w-screen"
+                            class="pointer-events-auto min-h-0 w-screen"
                             x-bind:class="getComponentPanelAttribute('{{ $id }}', 'maxWidthClass') ?? panelWidth"
                             style="grid-area: stack"
                             wire:key="{{ $id }}"
