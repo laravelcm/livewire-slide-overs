@@ -2,6 +2,14 @@
 
 All notable changes to `livewire-slide-overs` will be documented in this file.
 
+## v2.0.2 - 2026-03-17
+
+### What's Changed
+
+* fix: stacked panel overflow and initialize changelog by @mckenziearts in https://github.com/laravelcm/livewire-slide-overs/pull/14
+
+**Full Changelog**: https://github.com/laravelcm/livewire-slide-overs/compare/v2.0.1...v2.0.2
+
 ## v2.0.1 - 2026-03-17
 
 - fix: support both Livewire 3.x and 4.x component resolution (#13)
