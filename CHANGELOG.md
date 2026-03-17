@@ -2,6 +2,14 @@
 
 All notable changes to `livewire-slide-overs` will be documented in this file.
 
+## v2.0.3 - 2026-03-17
+
+### What's Changed
+
+* fix: safelist max-width classes for Tailwind v4 by @mckenziearts in https://github.com/laravelcm/livewire-slide-overs/pull/15
+
+**Full Changelog**: https://github.com/laravelcm/livewire-slide-overs/compare/v2.0.2...v2.0.3
+
 ## v2.0.2 - 2026-03-17
 
 ### What's Changed
