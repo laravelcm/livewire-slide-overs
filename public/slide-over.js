@@ -43,9 +43,10 @@ window.SlideOver = () => {
 
       const position = this.getComponentPanelAttribute(id, 'position') ?? 'right'
       const dx = position === 'left' ? 1 : -1
+      const offset = window.innerWidth < 640 ? 0.5 : 2
 
       return {
-        transform: 'scale(' + (1 - 0.05 * index) + ') translateX(' + (2 * dx * index) + 'rem)',
+        transform: 'scale(' + (1 - 0.05 * index) + ') translateX(' + (offset * dx * index) + 'rem)',
         opacity: index <= 2 ? 1 : 0,
       }
     },
@@ -56,7 +57,7 @@ window.SlideOver = () => {
 
       let force = this.getActiveComponentPanelAttribute('closeOnEscapeIsForceful') === true
 
-      if (this.stacked && this.componentHistory.length > 0) {
+      if (this.componentHistory.length > 0) {
         this.closePanel(false)
         return
       }

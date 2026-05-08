@@ -62,7 +62,7 @@
                             x-transition:leave="transform transition duration-500 ease-in-out"
                             x-transition:leave-start="translate-x-0"
                             x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
-                            class="pointer-events-auto min-h-0 w-screen"
+                            class="pointer-events-auto min-h-0 w-[calc(100vw-3rem)] sm:w-screen"
                             x-bind:class="getComponentPanelAttribute('{{ $id }}', 'maxWidthClass') ?? panelWidth"
                             style="grid-area: stack"
                             wire:key="{{ $id }}"
@@ -98,18 +98,18 @@
                         x-transition:leave="transform transition duration-500 ease-in-out"
                         x-transition:leave-start="translate-x-0"
                         x-transition:leave-end="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
-                        class="pointer-events-auto w-screen"
+                        class="pointer-events-auto w-[calc(100vw-3rem)] sm:w-screen"
                         x-bind:class="panelWidth"
                         x-trap.noscroll.inert="open && showActiveComponent"
                         @click.away="closePanelOnClickAway()"
                         aria-modal="true"
                     >
                         <div
-                            class="h-full overflow-hidden rounded-xl bg-zinc-50 shadow-lg ring-1 ring-zinc-950/20 p-1.5 dark:bg-zinc-950 dark:ring-white/10"
+                            class="h-full overflow-hidden rounded-xl bg-zinc-50 shadow-lg ring-1 ring-zinc-950/20 p-1 dark:bg-zinc-950 dark:ring-white/10"
                         >
                             @forelse ($components as $id => $component)
                                 <div
-                                    class="size-full min-w-0 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
+                                    class="size-full min-w-0 overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-zinc-950/20 dark:bg-zinc-900 dark:ring-white/10"
                                     x-show.immediate="activeComponent == '{{ $id }}'"
                                     x-ref="{{ $id }}"
                                     wire:key="{{ $id }}"
