@@ -2,6 +2,16 @@
 
 All notable changes to `livewire-slide-overs` will be documented in this file.
 
+## v2.0.4 - 2026-05-08
+
+### What's Changed
+
+* chore(deps-dev): bump the js-dependencies group with 2 updates by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/16
+* chore(deps-dev): bump the js-dependencies group with 2 updates by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/17
+* fix: stacked slide-over UX (ESC pops single panel, responsive width) by @mckenziearts in https://github.com/laravelcm/livewire-slide-overs/pull/18
+
+**Full Changelog**: https://github.com/laravelcm/livewire-slide-overs/compare/v2.0.3...v2.0.4
+
 ## v2.0.3 - 2026-03-17
 
 ### What's Changed
