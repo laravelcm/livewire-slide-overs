@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Reflector;
+use InvalidArgumentException;
 use Laravelcm\LivewireSlideOvers\Contracts\PanelContract;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -92,6 +93,24 @@ class SlideOverPanel extends Component
         return $class;
     }
 
+    /**
+     * @param  class-string<SlideOverComponent>  $componentClass
+     * @return array<string, mixed>
+     */
+    protected function resolvePanelAttributes(string $componentClass): array
+    {
+        return [
+            'closeOnClickAway' => $componentClass::closePanelOnClickAway(),
+            'closeOnEscape' => $componentClass::closePanelOnEscape(),
+            'closeOnEscapeIsForceful' => $componentClass::closePanelOnEscapeIsForceful(),
+            'dispatchCloseEvent' => $componentClass::dispatchCloseEvent(),
+            'destroyOnClose' => $componentClass::destroyOnClose(),
+            'maxWidth' => $componentClass::panelMaxWidth(),
+            'maxWidthClass' => $componentClass::panelMaxWidthClass(),
+            'position' => $componentClass::panelPosition()->value,
+        ];
+    }
+
     public function resetState(): void
     {
         $this->components = [];
@@ -105,8 +124,12 @@ class SlideOverPanel extends Component
      * @throws ReflectionException
      */
     #[On('openPanel')]
-    public function openPanel(string $component, array $arguments = [], array $panelAttributes = []): void
+    public function openPanel(string $component, array $arguments = [], array $panelAttributes = [], ?string $id = null): void
     {
+        if ($id !== null && preg_match('/^[a-zA-Z0-9_-]{1,64}$/', $id) !== 1) {
+            throw new InvalidArgumentException('The slide-over panel id must contain only alphanumeric characters, underscores, or hyphens, and be between 1 and 64 characters long.');
+        }
+
         $requiredInterface = PanelContract::class;
         /** @var class-string<SlideOverComponent> $componentClass */
         $componentClass = $this->resolveComponentClass($component);
@@ -116,7 +139,7 @@ class SlideOverPanel extends Component
             throw new Exception("[{$componentClass}] does not implement [{$requiredInterface}] interface.");
         }
 
-        $id = md5($component.json_encode($arguments));
+        $id ??= md5($component.json_encode($arguments));
 
         $arguments = collect($arguments)
             ->merge($this->resolveComponentProps($arguments, new $componentClass))
@@ -125,16 +148,10 @@ class SlideOverPanel extends Component
         $this->components[$id] = [
             'name' => $component,
             'arguments' => $arguments,
-            'panelAttributes' => array_merge([
-                'closeOnClickAway' => $componentClass::closePanelOnClickAway(),
-                'closeOnEscape' => $componentClass::closePanelOnEscape(),
-                'closeOnEscapeIsForceful' => $componentClass::closePanelOnEscapeIsForceful(),
-                'dispatchCloseEvent' => $componentClass::dispatchCloseEvent(),
-                'destroyOnClose' => $componentClass::destroyOnClose(),
-                'maxWidth' => $componentClass::panelMaxWidth(),
-                'maxWidthClass' => $componentClass::panelMaxWidthClass(),
-                'position' => $componentClass::panelPosition()->value,
-            ], $panelAttributes),
+            'panelAttributes' => array_merge(
+                $this->resolvePanelAttributes($componentClass),
+                $panelAttributes,
+            ),
         ];
 
         $this->activeComponent = $id;

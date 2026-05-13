@@ -75,3 +75,15 @@ it('emits events with parameters to specific component when closing panel', func
         ])
         ->assertDispatched('someEventWithParams', 'param1', 'param2');
 });
+
+it('dispatches resizeSlideOverPanel when resizing the active panel', function (): void {
+    Livewire::test(DemoSlideOver::class)
+        ->call('resizePanel', 'max-w-6xl')
+        ->assertDispatched('resizeSlideOverPanel', maxWidthClass: 'max-w-6xl', id: null);
+});
+
+it('dispatches resizeSlideOverPanel targeting a specific panel id', function (): void {
+    Livewire::test(DemoSlideOver::class)
+        ->call('resizePanel', 'max-w-2xl', 'some-panel-id')
+        ->assertDispatched('resizeSlideOverPanel', maxWidthClass: 'max-w-2xl', id: 'some-panel-id');
+});
