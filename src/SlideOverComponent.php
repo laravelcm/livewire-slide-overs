@@ -141,6 +141,22 @@ abstract class SlideOverComponent extends Component implements PanelContract
     }
 
     /**
+     * Dynamically resize the slide-over panel.
+     *
+     * Pass a Tailwind max-width utility class (e.g. "max-w-2xl", "max-w-6xl")
+     * or any arbitrary class string. When $id is null, the currently active
+     * panel is resized; otherwise the targeted panel is resized.
+     */
+    public function resizePanel(string $maxWidthClass, ?string $id = null): void
+    {
+        $this->dispatch(
+            'resizeSlideOverPanel',
+            maxWidthClass: $maxWidthClass,
+            id: $id,
+        );
+    }
+
+    /**
      * @param  array<int|string, mixed>  $events
      */
     public function closePanelWithEvents(array $events): void

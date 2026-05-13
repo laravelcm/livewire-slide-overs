@@ -82,6 +82,24 @@ To open a slide over you will need to dispatch an event. To open the `ShoppingCa
 <button wire:click="$dispatch('openPanel', { component: 'shop.actions.shopping-cart' })">View cart</button>
 ```
 
+### Instant Open (Optimistic UI)
+
+Dispatching `openPanel` waits for a full Livewire round-trip before the drawer animates. The `window.$slideOver` helper opens the drawer chrome immediately while the Livewire content hydrates inside it during the slide transition:
+
+```blade
+<button onclick="$slideOver.open('shopping-cart')">View cart</button>
+
+<!-- With arguments -->
+<button onclick="$slideOver.open('edit-user', { user: {{ $user->id }} })">Edit user</button>
+
+<!-- With panel attribute overrides -->
+<button onclick="$slideOver.open('shopping-cart', {}, { maxWidthClass: 'max-w-2xl' })">View cart</button>
+```
+
+**How the cache works.** No registration or config is required. The first time a given component is opened in a session, the helper falls back to a standard Livewire round-trip (the drawer can't animate without knowing its width and position). Once the server response returns, the resolved panel attributes are stored in `sessionStorage`, and every subsequent open of the same component during that session is instant.
+
+If you want the very first open to be instant too, pass the relevant attributes explicitly as the third argument — they bypass the cache and let the helper animate immediately.
+
 ## Passing Data
 
 You can pass data to the slide over component by adding an `arguments` object to the dispatch event:
@@ -119,6 +137,37 @@ class EditUser extends SlideOverComponent
 ```
 
 Model binding is automatic - just type-hint the model and pass the ID as the argument.
+
+## Resizing a Slide Over Dynamically
+
+A slide over's width is normally set once via `panelMaxWidth()` on the component class. To change the width while the panel is open (for example, expanding when the user reveals additional content), call `resizePanel()` from your component:
+
+```php
+public function loadDetails(): void
+{
+    // ... fetch data ...
+
+    // Expand the panel to give the new content some room.
+    $this->resizePanel('max-w-6xl');
+}
+
+public function clearDetails(): void
+{
+    // ... reset ...
+
+    $this->resizePanel('max-w-2xl');
+}
+```
+
+The argument is a Tailwind max-width utility class (`max-w-sm` through `max-w-7xl`) or any arbitrary class string — including JIT values such as `max-w-[800px]`. The change is applied client-side via a smooth CSS transition; no full re-render of the panel is required.
+
+To target a specific panel in a stacked configuration, pass its id as the second argument:
+
+```php
+$this->resizePanel('max-w-4xl', $panelId);
+```
+
+When omitted, the currently active panel is resized.
 
 ## Closing the Slide Over
 

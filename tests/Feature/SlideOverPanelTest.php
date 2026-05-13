@@ -116,3 +116,68 @@ it('includes position in panel attributes', function (): void {
 
     expect($components[$id]['panelAttributes'])->toHaveKey('position', 'right');
 });
+
+it('uses the client-provided id when given', function (): void {
+    $component = 'demo-slide-over';
+    $arguments = ['message' => 'Optimistic'];
+    $clientId = 'so-abc123';
+
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: $component, arguments: $arguments, id: $clientId)
+        ->assertSet('activeComponent', $clientId)
+        ->assertDispatched('activePanelComponentChanged', id: $clientId);
+});
+
+it('falls back to md5 id when no id is provided', function (): void {
+    $component = 'demo-slide-over';
+    $arguments = ['message' => 'Legacy path'];
+    $expectedId = md5($component.json_encode($arguments));
+
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: $component, arguments: $arguments)
+        ->assertSet('activeComponent', $expectedId);
+});
+
+it('rejects ids with unsafe characters to prevent expression injection', function (string $unsafeId): void {
+    expect(
+        fn () => Livewire::test(SlideOverPanel::class)
+            ->dispatch('openPanel', component: 'demo-slide-over', id: $unsafeId)
+    )->toThrow(InvalidArgumentException::class);
+})->with([
+    'with single quote' => "foo'; alert(1); //",
+    'with double quote' => 'foo"; alert(1); //',
+    'with angle brackets' => '<script>alert(1)</script>',
+    'with spaces' => 'foo bar',
+    'with dots' => 'foo.bar',
+    'with slashes' => '../etc/passwd',
+    'with backticks' => 'foo`bar',
+]);
+
+it('rejects ids that exceed the maximum length', function (): void {
+    $tooLong = str_repeat('a', 65);
+
+    expect(
+        fn () => Livewire::test(SlideOverPanel::class)
+            ->dispatch('openPanel', component: 'demo-slide-over', id: $tooLong)
+    )->toThrow(InvalidArgumentException::class);
+});
+
+it('rejects an empty id when explicitly provided', function (): void {
+    expect(
+        fn () => Livewire::test(SlideOverPanel::class)
+            ->dispatch('openPanel', component: 'demo-slide-over', id: '')
+    )->toThrow(InvalidArgumentException::class);
+});
+
+it('accepts safe id patterns', function (string $safeId): void {
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: 'demo-slide-over', id: $safeId)
+        ->assertSet('activeComponent', $safeId);
+})->with([
+    'alphanumeric' => 'abc123',
+    'with hyphen' => 'so-abc-def',
+    'with underscore' => 'panel_id_42',
+    'prefixed hash' => 'so-1y2u3w-2k9v',
+    'single char' => 'a',
+    'max length' => str_repeat('x', 64),
+]);
