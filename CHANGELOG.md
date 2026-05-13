@@ -2,6 +2,14 @@
 
 All notable changes to `livewire-slide-overs` will be documented in this file.
 
+## v2.1.0 - 2026-05-13
+
+### What's Changed
+
+* feat: instant open, dynamic resize, native dialog mode by @mckenziearts in https://github.com/laravelcm/livewire-slide-overs/pull/19
+
+**Full Changelog**: https://github.com/laravelcm/livewire-slide-overs/compare/v2.0.4...v2.1.0
+
 ## v2.0.4 - 2026-05-08
 
 ### What's Changed
