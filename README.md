@@ -138,6 +138,26 @@ class EditUser extends SlideOverComponent
 
 Model binding is automatic - just type-hint the model and pass the ID as the argument.
 
+Only arguments that match a public property or a `mount()` parameter of the component are passed on. Other keys are dropped.
+
+The arguments always come from the browser, even when `openPanel` is dispatched from PHP, so treat them as user input. Authorize in `mount()` and in every public action, since any public method of an open slide over can be called by the client:
+
+```php
+public function mount(User $user)
+{
+    $this->authorize('update', $user);
+
+    $this->user = $user;
+}
+
+public function save()
+{
+    $this->authorize('update', $this->user);
+
+    // ...
+}
+```
+
 ## Resizing a Slide Over Dynamically
 
 A slide over's width is normally set once via `panelMaxWidth()` on the component class. To change the width while the panel is open (for example, expanding when the user reveals additional content), call `resizePanel()` from your component:

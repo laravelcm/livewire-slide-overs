@@ -5,11 +5,13 @@ declare(strict_types=1);
 use Laravelcm\LivewireSlideOvers\SlideOverPanel;
 use Laravelcm\LivewireSlideOvers\Tests\Components\DemoSlideOver;
 use Laravelcm\LivewireSlideOvers\Tests\Components\InvalidSlideOver;
+use Laravelcm\LivewireSlideOvers\Tests\Components\TeamSlideOver;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
     Livewire::component('demo-slide-over', DemoSlideOver::class);
     Livewire::component('invalid-slide-over', InvalidSlideOver::class);
+    Livewire::component('team-slide-over', TeamSlideOver::class);
 });
 
 it('opens a panel via openPanel event', function (): void {
@@ -181,3 +183,38 @@ it('accepts safe id patterns', function (string $safeId): void {
     'single char' => 'a',
     'max length' => str_repeat('x', 64),
 ]);
+
+it('keeps only the arguments the slide-over declares', function (): void {
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: 'demo-slide-over', id: 'panel', arguments: [
+            'user' => 1,
+            'lazy' => true,
+            'defer' => true,
+            'lazy.bundle' => true,
+            'defer.bundle' => true,
+            'wire:ref' => 'child',
+            '@saved' => 'refresh',
+            'unknown' => 'value',
+            0 => 'positional',
+        ])
+        ->assertSet('components.panel.arguments', ['user' => 1]);
+});
+
+it('keeps mount parameters and maps kebab-case keys to properties', function (): void {
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: 'team-slide-over', id: 'panel', arguments: ['ownerId' => 1, 'team-name' => 'Core'])
+        ->assertSet('components.panel.arguments', ['ownerId' => 1, 'teamName' => 'Core'])
+        ->assertSee('Core');
+});
+
+it('runs mount() when the client asks for lazy loading', function (): void {
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: 'team-slide-over', arguments: ['ownerId' => 2, 'lazy' => true])
+        ->assertForbidden();
+});
+
+it('computes the default id from the filtered arguments', function (): void {
+    Livewire::test(SlideOverPanel::class)
+        ->dispatch('openPanel', component: 'demo-slide-over', arguments: ['message' => 'Hi', 'lazy' => true])
+        ->assertSet('activeComponent', md5('demo-slide-over'.json_encode(['message' => 'Hi'])));
+});

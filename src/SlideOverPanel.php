@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Reflector;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Laravelcm\LivewireSlideOvers\Contracts\PanelContract;
 use Livewire\Attributes\Locked;
@@ -20,6 +21,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionParameter;
 use ReflectionProperty;
 
 class SlideOverPanel extends Component
@@ -111,6 +113,40 @@ class SlideOverPanel extends Component
         ];
     }
 
+    /**
+     * The arguments come from the browser and reach @livewire() as mount params,
+     * where Livewire reads `lazy` and `defer` as instructions that skip mount().
+     *
+     * @param  array<int|string, mixed>  $arguments
+     * @param  ReflectionClass<SlideOverComponent>  $slideOver
+     * @return array<string, mixed>
+     */
+    protected function declaredArguments(array $arguments, ReflectionClass $slideOver): array
+    {
+        $properties = array_filter(
+            $slideOver->getProperties(ReflectionProperty::IS_PUBLIC),
+            fn (ReflectionProperty $property): bool => ! $property->isStatic(),
+        );
+        $mountParameters = $slideOver->hasMethod('mount') ? $slideOver->getMethod('mount')->getParameters() : [];
+
+        $names = array_diff([
+            ...array_map(fn (ReflectionProperty $property): string => $property->getName(), $properties),
+            ...array_map(fn (ReflectionParameter $parameter): string => $parameter->getName(), $mountParameters),
+        ], ['lazy', 'defer']);
+
+        $declared = [];
+
+        foreach ($arguments as $key => $value) {
+            $name = is_string($key) && str_contains($key, '-') ? Str::camel($key) : $key;
+
+            if (in_array($name, $names, true)) {
+                $declared[$name] = $value;
+            }
+        }
+
+        return $declared;
+    }
+
     public function resetState(): void
     {
         $this->components = [];
@@ -138,6 +174,8 @@ class SlideOverPanel extends Component
         if ($reflect->implementsInterface($requiredInterface) === false) {
             throw new Exception("[{$componentClass}] does not implement [{$requiredInterface}] interface.");
         }
+
+        $arguments = $this->declaredArguments($arguments, $reflect);
 
         $id ??= md5($component.json_encode($arguments));
 
