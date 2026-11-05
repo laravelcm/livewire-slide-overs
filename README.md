@@ -22,7 +22,7 @@ This package is inspired by [wire-elements/modal](https://github.com/wire-elemen
 ## Requirements
 
 - PHP 8.3 or higher
-- Laravel 11.x or 12.x
+- Laravel 12.x or 13.x
 - Livewire 3.4 or 4.x
 
 ## Installation
@@ -137,6 +137,26 @@ class EditUser extends SlideOverComponent
 ```
 
 Model binding is automatic - just type-hint the model and pass the ID as the argument.
+
+Only arguments that match a public property or a `mount()` parameter of the component are passed on. Other keys are dropped.
+
+The arguments always come from the browser, even when `openPanel` is dispatched from PHP, so treat them as user input. Authorize in `mount()` and in every public action, since any public method of an open slide over can be called by the client:
+
+```php
+public function mount(User $user)
+{
+    $this->authorize('update', $user);
+
+    $this->user = $user;
+}
+
+public function save()
+{
+    $this->authorize('update', $this->user);
+
+    // ...
+}
+```
 
 ## Resizing a Slide Over Dynamically
 
