@@ -2,6 +2,26 @@
 
 All notable changes to `livewire-slide-overs` will be documented in this file.
 
+## v2.1.1 - 2026-11-05
+
+### Security
+
+`openPanel` passed every argument sent by the browser to `@livewire()`. A client could add `lazy` or `defer` and open any registered slide-over as a lazy placeholder, which skips its `mount()` (and the authorization placed there) while its public actions stay callable. All versions up to v2.1.0 are affected. Details in [GHSA-hg7g-pvvc-mggp](https://github.com/laravelcm/livewire-slide-overs/security/advisories/GHSA-hg7g-pvvc-mggp).
+
+`openPanel` now keeps only the arguments that match a public property or a `mount()` parameter of the slide-over, and always drops `lazy` and `defer`. Numeric keys and undeclared keys are no longer passed; kebab-case keys are mapped to camelCase.
+
+Laravel 11 is no longer tested: Composer refuses to install any `laravel/framework` 11.x release because of open security advisories.
+
+### What's Changed
+
+* chore(deps): bump actions/setup-node from 6 to 7 by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/23
+* chore(deps): bump actions/cache from 5 to 6 by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/22
+* chore(deps): bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/21
+* chore(deps-dev): bump the js-dependencies group with 2 updates by @dependabot[bot] in https://github.com/laravelcm/livewire-slide-overs/pull/20
+* fix: pass only declared arguments from openPanel to the slide-over by @mckenziearts in https://github.com/laravelcm/livewire-slide-overs/pull/24
+
+**Full Changelog**: https://github.com/laravelcm/livewire-slide-overs/compare/v2.1.0...v2.1.1
+
 ## v2.1.0 - 2026-05-13
 
 ### What's Changed
