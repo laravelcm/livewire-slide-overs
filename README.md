@@ -22,7 +22,7 @@ This package is inspired by [wire-elements/modal](https://github.com/wire-elemen
 ## Requirements
 
 - PHP 8.3 or higher
-- Laravel 11.x or 12.x
+- Laravel 12.x or 13.x
 - Livewire 3.4 or 4.x
 
 ## Installation
